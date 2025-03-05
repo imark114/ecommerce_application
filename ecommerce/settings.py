@@ -38,7 +38,11 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     # local app
-    "ecommerce.dashboard"
+    "ecommerce.dashboard",
+    "ecommerce.inventory",
+    "ecommerce.demo",
+    # external application
+    "mptt",
 ]
 
 MIDDLEWARE = [
