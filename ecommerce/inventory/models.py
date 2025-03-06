@@ -41,3 +41,73 @@ class Product(models.Model):
 
     def __str__(self):
         return self.name
+
+class ProductType(models.Model):
+    name = models.CharField(_("type of a product"), max_length=255, unique=True)
+
+    def __str__(self):
+        return self.name
+
+class Brand(models.Model):
+    name = models.CharField(max_length=255, unique=True, verbose_name=_("brand name"))
+
+    def __str__(self):
+        return self.name
+
+class ProductInventory(models.Model):
+    sku = models.CharField(max_length=50, unique=True, verbose_name=_("stock keeping unit"))
+    upc = models.CharField(max_length=12, unique=True, verbose_name=_("universal product code"))
+    product_type = models.ForeignKey(
+        ProductType,
+        on_delete=models.PROTECT,
+        related_name="product_type"
+    )
+    product = models.ForeignKey(
+        Product,
+        on_delete=models.PROTECT,
+        related_name="product"
+    )
+    brand = models.ForeignKey(
+        Brand,
+        on_delete=models.PROTECT,
+        related_name="brand"
+    )
+    
+    is_active = models.BooleanField(default=True, verbose_name=_("product visibility"))
+    retail_price = models.DecimalField(
+        max_digits=5,
+        decimal_places=2,
+        verbose_name=_("recomended retail price"),
+        error_messages={
+            "name":{
+                "max_length": _("the price must be between 0 to 999.99")
+            }
+        }
+    )
+    store_price = models.DecimalField(
+        max_digits=5,
+        decimal_places=2,
+        verbose_name=_("recomended retail price"),
+        error_messages={
+            "name":{
+                "max_length": _("the price must be between 0 to 999.99")
+            }
+        }
+    )
+    sale_price = models.DecimalField(
+        max_digits=5,
+        decimal_places=2,
+        verbose_name=_("recomended retail price"),
+        error_messages={
+            "name":{
+                "max_length": _("the price must be between 0 to 999.99")
+            }
+        }
+    )
+    weight = models.FloatField(_("Product weight"))
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.product.name
