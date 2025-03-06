@@ -111,3 +111,25 @@ class ProductInventory(models.Model):
 
     def __str__(self):
         return self.product.name
+    
+
+class Media(models.Model):
+    product_inventory = models.ForeignKey(
+        ProductInventory,
+        on_delete=models.PROTECT,
+        related_name="media_product_inventory"
+    )
+
+    image = models.ImageField(
+        verbose_name=_("product image"),
+        upload_to="images/",
+        default="images/default.png"
+    )
+    alt_text = models.CharField(_("alternative text for the image"), max_length=255)
+    is_feature = models.BooleanField(_("product default image"), default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name = _("product image")
+        verbose_name_plural = _("product images")
