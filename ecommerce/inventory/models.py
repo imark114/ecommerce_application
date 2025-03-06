@@ -133,3 +133,31 @@ class Media(models.Model):
     class Meta:
         verbose_name = _("product image")
         verbose_name_plural = _("product images")
+
+class Stock(models.Model):
+    product_inventory = models.OneToOneField(
+        ProductInventory,
+        related_name="product_inventory",
+        on_delete=models.PROTECT
+    )
+    last_checked = models.DateTimeField(_("inventory stock check date"), null=True, blank=True)
+    units = models.IntegerField(_("units/qty of stock"), default=0)
+    units_sold = models.IntegerField(_("units sold to date"), default=0)
+
+class ProductAttribute(models.Model):
+    name = models.CharField(_("product attribute name"), unique=True, max_length=255)
+    description = models.TextField(_("product attribute description"))
+
+    def __str__(self):
+        return self.name
+
+class ProductAttributeValue(models.Model):
+    product_attribute = models.ForeignKey(
+        ProductAttribute,
+        related_name="product_attribute",
+        on_delete=models.PROTECT
+    )
+    attribute_value = models.CharField(_("attribute value"), max_length=255)
+
+    def __str__(self):
+        return f"{self.product_attribute.name} : {self.attribute_value}"

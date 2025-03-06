@@ -77,3 +77,27 @@ class MediaFactory(factory.django.DjangoModelFactory):
     is_feature = True
 
 register(MediaFactory)
+
+class StockFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = models.Stock
+    product_inventory = factory.SubFactory(ProductInventoryFactory)
+    units = 2
+    units_sold = 100
+register(StockFactory)
+
+class ProductAttributeFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = models.ProductAttribute
+    name = factory.Sequence(lambda n : "attribute_name_%d" % n)
+    description = factory.Sequence(lambda n : "description_%d" % n)
+
+register(ProductAttributeFactory)
+
+class ProductAttributeValueFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = models.ProductAttributeValue
+    product_attribute = factory.SubFactory(ProductAttributeFactory)
+    attribute_value = fake.lexify(text="attribute_value_??????")
+
+register(ProductAttributeValueFactory)
