@@ -18,3 +18,4 @@ def db_fixture_setup(django_db_setup, django_db_blocker):
         call_command("loaddata", "db_stock_fixture.json")
         call_command("loaddata", "db_product_attribute.json")
         call_command("loaddata", "db_product_attribute_value.json")
+        call_command("loaddata", "db_product_attribute_values_fixture.json")

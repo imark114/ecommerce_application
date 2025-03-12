@@ -41,10 +41,32 @@ class Product(models.Model):
 
     def __str__(self):
         return self.name
+class ProductAttribute(models.Model):
+    name = models.CharField(_("product attribute name"), unique=True, max_length=255)
+    description = models.TextField(_("product attribute description"))
+
+    def __str__(self):
+        return self.name
+
+class ProductAttributeValue(models.Model):
+    product_attribute = models.ForeignKey(
+        ProductAttribute,
+        related_name="product_attribute",
+        on_delete=models.PROTECT
+    )
+    attribute_value = models.CharField(_("attribute value"), max_length=255)
+
+    def __str__(self):
+        return f"{self.product_attribute.name} : {self.attribute_value}"
+    
 
 class ProductType(models.Model):
     name = models.CharField(_("type of a product"), max_length=255, unique=True)
-
+    product_type_attributes = models.ManyToManyField(
+        ProductAttribute,
+        through="ProductTypeAttribute",
+        related_name="product_type_attributes"
+    )
     def __str__(self):
         return self.name
 
@@ -53,6 +75,7 @@ class Brand(models.Model):
 
     def __str__(self):
         return self.name
+
 
 class ProductInventory(models.Model):
     sku = models.CharField(max_length=50, unique=True, verbose_name=_("stock keeping unit"))
@@ -72,8 +95,13 @@ class ProductInventory(models.Model):
         on_delete=models.PROTECT,
         related_name="brand"
     )
-    
+    attribute_values = models.ManyToManyField(
+        ProductAttributeValue,
+        through="ProductAttributeValues",
+        related_name="product_attribute_values"
+    )
     is_active = models.BooleanField(default=True, verbose_name=_("product visibility"))
+    is_default = models.BooleanField(default=False, verbose_name=_("default product"))
     retail_price = models.DecimalField(
         max_digits=5,
         decimal_places=2,
@@ -144,20 +172,33 @@ class Stock(models.Model):
     units = models.IntegerField(_("units/qty of stock"), default=0)
     units_sold = models.IntegerField(_("units sold to date"), default=0)
 
-class ProductAttribute(models.Model):
-    name = models.CharField(_("product attribute name"), unique=True, max_length=255)
-    description = models.TextField(_("product attribute description"))
 
-    def __str__(self):
-        return self.name
-
-class ProductAttributeValue(models.Model):
-    product_attribute = models.ForeignKey(
-        ProductAttribute,
-        related_name="product_attribute",
+class ProductAttributeValues(models.Model):
+    attributevalues = models.ForeignKey(
+        ProductAttributeValue,
+        related_name="attribute_values",
         on_delete=models.PROTECT
     )
-    attribute_value = models.CharField(_("attribute value"), max_length=255)
+    productinventory = models.ForeignKey(
+        ProductInventory,
+        related_name="productattributevaluess",
+        on_delete=models.PROTECT
+    )
 
-    def __str__(self):
-        return f"{self.product_attribute.name} : {self.attribute_value}"
+    class Meta:
+        unique_together = (("attributevalues", "productinventory"),)
+
+class ProductTypeAttribute(models.Model):
+    product_type = models.ForeignKey(
+        ProductType,
+        related_name="producttype",
+        on_delete=models.PROTECT
+    )
+    product_attribute = models.ForeignKey(
+        ProductAttribute,
+        related_name="productattribute",
+        on_delete=models.PROTECT
+    )
+
+    class Meta:
+        unique_together = (("product_type", "product_attribute"),)

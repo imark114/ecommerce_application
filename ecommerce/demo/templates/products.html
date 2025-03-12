@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block content %}
+    <h1>Products</h1>
+    <ul>
+        {% for product in products %}
+            <li class="text-capitalize" >{{product.name}}  [<a href=" {% url "demo:product_detail" slug=product.slug %} ">view</a>]</li>
+            <li>Category: {{product.category__name}}</li>
+            <li>Price: ${{product.product__store_price}}</li>
+        {% endfor %}
+    </ul>
+{% endblock content %}

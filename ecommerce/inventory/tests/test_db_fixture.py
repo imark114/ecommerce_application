@@ -340,3 +340,12 @@ def test_inventory_db_product_attribute_value_data(
     )
     assert new_attribute_value.attribute_value == "new_value"
     assert new_attribute_value.product_attribute.name == "new_value"
+
+def test_inventory_db_insert_inventory_product_values(
+    db, product_with_attribute_values_factory
+):
+
+    new_inv_attribute = product_with_attribute_values_factory(sku="123456789")
+    result = models.ProductInventory.objects.get(sku="123456789")
+    count = result.attribute_values.all().count()
+    assert count == 2

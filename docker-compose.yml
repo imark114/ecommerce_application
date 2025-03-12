@@ -1,0 +1,13 @@
+name: ecommerce-application
+services:
+  pgdb:
+    restart: always
+    image: postgres
+    container_name: pgdb_ecommerce
+    environment:
+      - POSTGRES_DB=ecommerce
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    ports:
+      - "5432:5432"
+
